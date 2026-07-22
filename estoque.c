@@ -42,6 +42,58 @@ void cadastrarProduto() {
 
     printf("\nProduto salvo com sucesso!\n");
 }
+    void listarProdutos() {
+    Produto p;
+    FILE *arquivo;
+
+    arquivo = fopen(ARQUIVO, "rb");
+
+    if (arquivo == NULL) {
+        printf("\nNenhum produto cadastrado ainda.\n");
+        return;
+    }
+
+    printf("\n--- Lista de Produtos ---\n");
+
+    while (fread(&p, sizeof(Produto), 1, arquivo) == 1) {
+        printf("Codigo: %d | Nome: %s | Preco: %.2f | Quantidade: %d\n",
+               p.codigo, p.nome, p.preco, p.quantidade);
+    }
+
+    fclose(arquivo);
+}
+    void buscarProduto() {
+    Produto p;
+    FILE *arquivo;
+    int codigoBusca;
+    int encontrado = 0;
+
+    printf("\nDigite o codigo do produto que deseja buscar: ");
+    scanf("%d", &codigoBusca);
+
+    arquivo = fopen(ARQUIVO, "rb");
+
+    if (arquivo == NULL) {
+        printf("\nNenhum produto cadastrado ainda.\n");
+        return;
+    }
+
+    while (fread(&p, sizeof(Produto), 1, arquivo) == 1) {
+        if (p.codigo == codigoBusca) {
+            printf("\n--- Produto encontrado ---\n");
+            printf("Codigo: %d | Nome: %s | Preco: %.2f | Quantidade: %d\n",
+                   p.codigo, p.nome, p.preco, p.quantidade);
+            encontrado = 1;
+            break;
+        }
+    }
+
+    if (encontrado == 0) {
+        printf("\nProduto com codigo %d nao encontrado.\n", codigoBusca);
+    }
+
+    fclose(arquivo);
+}
     int main() {
     int opcao;
 
@@ -56,10 +108,12 @@ void cadastrarProduto() {
 
         if (opcao == 1) {
         cadastrarProduto();
-}         else if (opcao == 2) {
-            printf("Voce escolheu Listar produtos.\n");
-        } else if (opcao == 3) {
-            printf("Voce escolheu Buscar produto.\n");
+        } else if (opcao == 2) {
+        listarProdutos();
+        
+         } else if (opcao == 3) {
+    buscarProduto();
+    
         } else if (opcao == 0) {
             printf("Encerrando o sistema...\n");
         } else {
