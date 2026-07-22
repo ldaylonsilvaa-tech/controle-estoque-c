@@ -11,7 +11,27 @@ typedef struct {
     int quantidade;
 } Produto;
 
-int main() {
+void cadastrarProduto() {
+    Produto p;
+
+    printf("\n--- Cadastro de Produto ---\n");
+    printf("Codigo: ");
+    scanf("%d", &p.codigo);
+
+    printf("Nome: ");
+    scanf(" %[^\n]", p.nome);
+
+    printf("Preco: ");
+    scanf("%f", &p.preco);
+
+    printf("Quantidade: ");
+    scanf("%d", &p.quantidade);
+
+    printf("\nProduto cadastrado (ainda nao salvo em arquivo):\n");
+    printf("Codigo: %d | Nome: %s | Preco: %.2f | Quantidade: %d\n",
+           p.codigo, p.nome, p.preco, p.quantidade);
+}
+    int main() {
     int opcao;
 
     do {
@@ -24,8 +44,8 @@ int main() {
         scanf("%d", &opcao);
 
         if (opcao == 1) {
-            printf("Voce escolheu Cadastrar produto.\n");
-        } else if (opcao == 2) {
+        cadastrarProduto();
+}         else if (opcao == 2) {
             printf("Voce escolheu Listar produtos.\n");
         } else if (opcao == 3) {
             printf("Voce escolheu Buscar produto.\n");
