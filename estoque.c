@@ -13,8 +13,10 @@ typedef struct {
 
 void cadastrarProduto() {
     Produto p;
+    FILE *arquivo;
 
     printf("\n--- Cadastro de Produto ---\n");
+
     printf("Codigo: ");
     scanf("%d", &p.codigo);
 
@@ -27,9 +29,18 @@ void cadastrarProduto() {
     printf("Quantidade: ");
     scanf("%d", &p.quantidade);
 
-    printf("\nProduto cadastrado (ainda nao salvo em arquivo):\n");
-    printf("Codigo: %d | Nome: %s | Preco: %.2f | Quantidade: %d\n",
-           p.codigo, p.nome, p.preco, p.quantidade);
+    arquivo = fopen(ARQUIVO, "ab");
+
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo!\n");
+        return;
+    }
+
+    fwrite(&p, sizeof(Produto), 1, arquivo);
+
+    fclose(arquivo);
+
+    printf("\nProduto salvo com sucesso!\n");
 }
     int main() {
     int opcao;
