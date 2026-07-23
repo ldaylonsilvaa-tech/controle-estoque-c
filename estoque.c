@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-
+#define LIMITE_ESTOQUE 5
 #define TAM_NOME 50
 #define ARQUIVO "estoque.dat"
 
@@ -140,27 +140,56 @@ void removerProduto() {
     }
 }
 
-int main() {
+void alertaEstoqueBaixo() {
+    Produto p;
+    FILE *arquivo;
+    int algumAlerta = 0;
+
+    arquivo = fopen(ARQUIVO, "rb");
+
+    if (arquivo == NULL) {
+        printf("\nNenhum produto cadastrado ainda.\n");
+        return;
+    }
+
+    printf("\n--- Produtos com Estoque Baixo (menor que %d) ---\n", LIMITE_ESTOQUE);
+
+    while (fread(&p, sizeof(Produto), 1, arquivo) == 1) {
+        if (p.quantidade < LIMITE_ESTOQUE) {
+            printf("Codigo: %d | Nome: %s | Quantidade: %d\n",
+                   p.codigo, p.nome, p.quantidade);
+            algumAlerta = 1;
+        }
+    }
+
+    if (algumAlerta == 0) {
+        printf("Nenhum produto com estoque baixo no momento.\n");
+    }
+
+    fclose(arquivo);
+}   int main() {
     int opcao;
 
     do {
-        printf("\n===== SISTEMA DE CONTROLE DE ESTOQUE =====\n");
         printf("1 - Cadastrar produto\n");
         printf("2 - Listar produtos\n");
         printf("3 - Buscar produto\n");
         printf("4 - Remover produto\n");
+        printf("5 - Alerta de estoque baixo\n");
         printf("0 - Sair\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
 
         if (opcao == 1) {
-            cadastrarProduto();
+        cadastrarProduto();
         } else if (opcao == 2) {
-            listarProdutos();
+        listarProdutos();
         } else if (opcao == 3) {
-            buscarProduto();
+        buscarProduto();
         } else if (opcao == 4) {
-            removerProduto();
+        removerProduto();
+        } else if (opcao == 5) {
+        alertaEstoqueBaixo();
         } else if (opcao == 0) {
             printf("Encerrando o sistema...\n");
         } else {
