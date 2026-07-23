@@ -42,7 +42,8 @@ void cadastrarProduto() {
 
     printf("\nProduto salvo com sucesso!\n");
 }
-    void listarProdutos() {
+
+void listarProdutos() {
     Produto p;
     FILE *arquivo;
 
@@ -62,7 +63,8 @@ void cadastrarProduto() {
 
     fclose(arquivo);
 }
-    void buscarProduto() {
+
+void buscarProduto() {
     Produto p;
     FILE *arquivo;
     int codigoBusca;
@@ -94,7 +96,51 @@ void cadastrarProduto() {
 
     fclose(arquivo);
 }
-    int main() {
+
+void removerProduto() {
+    Produto p;
+    FILE *arquivo, *temp;
+    int codigoRemover;
+    int encontrado = 0;
+
+    printf("\nDigite o codigo do produto que deseja remover: ");
+    scanf("%d", &codigoRemover);
+
+    arquivo = fopen(ARQUIVO, "rb");
+    if (arquivo == NULL) {
+        printf("\nNenhum produto cadastrado ainda.\n");
+        return;
+    }
+
+    temp = fopen("temp.dat", "wb");
+    if (temp == NULL) {
+        printf("Erro ao criar arquivo temporario!\n");
+        fclose(arquivo);
+        return;
+    }
+
+    while (fread(&p, sizeof(Produto), 1, arquivo) == 1) {
+        if (p.codigo == codigoRemover) {
+            encontrado = 1;
+        } else {
+            fwrite(&p, sizeof(Produto), 1, temp);
+        }
+    }
+
+    fclose(arquivo);
+    fclose(temp);
+
+    remove(ARQUIVO);
+    rename("temp.dat", ARQUIVO);
+
+    if (encontrado == 1) {
+        printf("\nProduto removido com sucesso!\n");
+    } else {
+        printf("\nProduto com codigo %d nao encontrado.\n", codigoRemover);
+    }
+}
+
+int main() {
     int opcao;
 
     do {
@@ -102,18 +148,19 @@ void cadastrarProduto() {
         printf("1 - Cadastrar produto\n");
         printf("2 - Listar produtos\n");
         printf("3 - Buscar produto\n");
+        printf("4 - Remover produto\n");
         printf("0 - Sair\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
 
         if (opcao == 1) {
-        cadastrarProduto();
+            cadastrarProduto();
         } else if (opcao == 2) {
-        listarProdutos();
-        
-         } else if (opcao == 3) {
-    buscarProduto();
-    
+            listarProdutos();
+        } else if (opcao == 3) {
+            buscarProduto();
+        } else if (opcao == 4) {
+            removerProduto();
         } else if (opcao == 0) {
             printf("Encerrando o sistema...\n");
         } else {
