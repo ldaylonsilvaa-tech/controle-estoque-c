@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <string.h>
-#define LIMITE_ESTOQUE 5
+
 #define TAM_NOME 50
 #define ARQUIVO "estoque.dat"
+#define LIMITE_ESTOQUE 5
 
 typedef struct {
     int codigo;
@@ -167,29 +168,89 @@ void alertaEstoqueBaixo() {
     }
 
     fclose(arquivo);
-}   int main() {
+}
+
+void editarProduto() {
+    Produto p;
+    FILE *arquivo, *temp;
+    int codigoEditar;
+    int encontrado = 0;
+
+    printf("\nDigite o codigo do produto que deseja editar: ");
+    scanf("%d", &codigoEditar);
+
+    arquivo = fopen(ARQUIVO, "rb");
+    if (arquivo == NULL) {
+        printf("\nNenhum produto cadastrado ainda.\n");
+        return;
+    }
+
+    temp = fopen("temp.dat", "wb");
+    if (temp == NULL) {
+        printf("Erro ao criar arquivo temporario!\n");
+        fclose(arquivo);
+        return;
+    }
+
+    while (fread(&p, sizeof(Produto), 1, arquivo) == 1) {
+        if (p.codigo == codigoEditar) {
+            encontrado = 1;
+
+            printf("\nProduto encontrado. Digite os novos dados:\n");
+
+            printf("Nome: ");
+            scanf(" %[^\n]", p.nome);
+
+            printf("Preco: ");
+            scanf("%f", &p.preco);
+
+            printf("Quantidade: ");
+            scanf("%d", &p.quantidade);
+        }
+
+        fwrite(&p, sizeof(Produto), 1, temp);
+    }
+
+    fclose(arquivo);
+    fclose(temp);
+
+    remove(ARQUIVO);
+    rename("temp.dat", ARQUIVO);
+
+    if (encontrado == 1) {
+        printf("\nProduto atualizado com sucesso!\n");
+    } else {
+        printf("\nProduto com codigo %d nao encontrado.\n", codigoEditar);
+    }
+}
+
+int main() {
     int opcao;
 
     do {
+        printf("\n===== SISTEMA DE CONTROLE DE ESTOQUE =====\n");
         printf("1 - Cadastrar produto\n");
         printf("2 - Listar produtos\n");
         printf("3 - Buscar produto\n");
         printf("4 - Remover produto\n");
         printf("5 - Alerta de estoque baixo\n");
+        printf("6 - Editar produto\n");
         printf("0 - Sair\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
 
         if (opcao == 1) {
-        cadastrarProduto();
+            cadastrarProduto();
         } else if (opcao == 2) {
-        listarProdutos();
+            listarProdutos();
         } else if (opcao == 3) {
-        buscarProduto();
+            buscarProduto();
         } else if (opcao == 4) {
-        removerProduto();
+            removerProduto();
         } else if (opcao == 5) {
-        alertaEstoqueBaixo();
+            alertaEstoqueBaixo();
+        } else if (opcao == 6) {
+            editarProduto();
         } else if (opcao == 0) {
             printf("Encerrando o sistema...\n");
         } else {
